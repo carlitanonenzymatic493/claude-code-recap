@@ -27,15 +27,7 @@ The GIF above is a downsampled loop. The full-quality recording is [`assets/demo
 
 ## <img src="assets/icons/download.svg" width="16" align="center"> Install
 
-> **Pre-release.** The remote install paths below (plugin marketplace, `npx`, and `curl | sh`) go live only once this repo is published to `github.com/noluyorAbi/claude-code-recap` and to npm. Until then they return 404, and the ci/npm/license badges above render as "not found". Install from a local checkout in the meantime:
->
-> ```bash
-> git clone https://github.com/noluyorAbi/claude-code-recap
-> cd claude-code-recap
-> sh install.sh            # or: node bin/cli.mjs
-> ```
->
-> Both write only into `~/.claude/skills/recap` (honoring `CLAUDE_CONFIG_DIR`) and support `--force` / `--uninstall`, exactly like the remote paths.
+> **npm note.** The plugin marketplace and `curl | sh` paths are live. The `npx claude-code-recap` path goes live once the package is published to npm; until then, use the marketplace, the `curl | sh` one-liner, or a local checkout (`git clone` then `sh install.sh`).
 
 ### 1. Plugin marketplace (recommended)
 
