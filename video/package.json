@@ -1,0 +1,31 @@
+{
+  "name": "claude-code-recap-video",
+  "version": "1.0.0",
+  "description": "Remotion source for the claude-code-recap demo video (assets/demo.mp4 and assets/demo.gif).",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "@remotion/cli": "4.0.489",
+    "@remotion/fonts": "4.0.489",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "remotion": "4.0.489"
+  },
+  "devDependencies": {
+    "@remotion/eslint-config-flat": "4.0.489",
+    "@types/react": "19.2.7",
+    "@types/web": "0.0.166",
+    "eslint": "9.19.0",
+    "prettier": "3.8.1",
+    "typescript": "5.9.3"
+  },
+  "scripts": {
+    "dev": "remotion studio",
+    "typecheck": "tsc",
+    "lint": "eslint src && tsc",
+    "compositions": "remotion compositions src/index.ts",
+    "render:mp4": "remotion render src/index.ts Demo ../assets/demo.mp4 --codec=h264 --log=error",
+    "render:gif": "remotion render src/index.ts Demo ../assets/demo.gif --codec=gif --every-nth-frame=2 --scale=0.5 --log=error",
+    "build": "npm run render:mp4 && npm run render:gif"
+  }
+}
