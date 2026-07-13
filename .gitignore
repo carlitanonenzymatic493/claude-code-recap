@@ -1,0 +1,19 @@
+# node
+node_modules/
+npm-debug.log*
+*.tgz
+.npmrc
+
+# python
+__pycache__/
+*.py[cod]
+
+# video build output
+out/
+video/out/
+remotion/out/
+
+# local
+.env
+.env.*
+.DS_Store

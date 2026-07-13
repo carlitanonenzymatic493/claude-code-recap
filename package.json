@@ -1,0 +1,55 @@
+{
+  "name": "claude-code-recap",
+  "version": "1.2.0",
+  "description": "Installs the recap skill into your Claude Code skills directory: list recent sessions across every project and get a ready-to-paste resume command.",
+  "type": "module",
+  "bin": {
+    "claude-code-recap": "bin/cli.mjs"
+  },
+  "exports": {
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "bin/",
+    "skills/",
+    "install.sh",
+    "!**/__pycache__",
+    "!**/*.pyc"
+  ],
+  "engines": {
+    "node": ">=18.17"
+  },
+  "keywords": [
+    "claude-code",
+    "claude-code-skills",
+    "claude-code-skill",
+    "claude-skill",
+    "agent-skills",
+    "agent-skill",
+    "skill-md",
+    "skills",
+    "anthropic",
+    "claude",
+    "session-recap",
+    "resume",
+    "developer-tools",
+    "cli"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/noluyorAbi/claude-code-recap.git"
+  },
+  "homepage": "https://github.com/noluyorAbi/claude-code-recap#readme",
+  "bugs": {
+    "url": "https://github.com/noluyorAbi/claude-code-recap/issues"
+  },
+  "license": "MIT",
+  "author": "noluyorAbi <121226886+noluyorAbi@users.noreply.github.com>",
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "check:version": "node scripts/check-version.mjs",
+    "test": "sh tests/smoke.sh"
+  }
+}

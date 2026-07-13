@@ -1,0 +1,93 @@
+name: ci
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      # The runner has no ~/.claude. Everything below must work anyway.
+      - name: No Claude Code config on this runner
+        run: test ! -d "$HOME/.claude"
+
+      - name: Python syntax check
+        run: python3 -m py_compile skills/recap/recap.py
+
+      - name: recap.py --help
+        run: python3 skills/recap/recap.py --help
+
+      - name: recap.py degrades gracefully without a config dir
+        run: |
+          set -eu
+          if python3 skills/recap/recap.py --json >out.txt 2>err.txt; then
+            echo "expected a nonzero exit without a Claude Code config dir" >&2
+            exit 1
+          fi
+          if grep -q Traceback err.txt; then
+            echo "recap.py printed a traceback instead of a clear message" >&2
+            cat err.txt >&2
+            exit 1
+          fi
+          cat err.txt
+
+      - name: shellcheck
+        run: shellcheck --shell=sh install.sh tests/smoke.sh
+
+      - name: node --check
+        run: |
+          node --check bin/cli.mjs
+          node --check scripts/check-version.mjs
+
+      - name: cli --help and --version
+        run: |
+          node bin/cli.mjs --help
+          node bin/cli.mjs --version
+
+      - name: Manifests are valid JSON
+        run: |
+          node -e "JSON.parse(require('fs').readFileSync('.claude-plugin/plugin.json','utf8'))"
+          node -e "JSON.parse(require('fs').readFileSync('.claude-plugin/marketplace.json','utf8'))"
+          node -e "JSON.parse(require('fs').readFileSync('package.json','utf8'))"
+
+      - name: Versions are in sync
+        run: node scripts/check-version.mjs
+
+      - name: Smoke test
+        run: sh tests/smoke.sh
+
+      - name: install.sh into a scratch config dir
+        run: |
+          set -eu
+          export CLAUDE_CONFIG_DIR="$RUNNER_TEMP/claude"
+          ./install.sh
+          test -f "$CLAUDE_CONFIG_DIR/skills/recap/SKILL.md"
+          test -f "$CLAUDE_CONFIG_DIR/skills/recap/recap.py"
+          ./install.sh              # idempotent update
+          ./install.sh --uninstall
+          test ! -d "$CLAUDE_CONFIG_DIR/skills/recap"
+
+      - name: cli.mjs into a scratch config dir
+        run: |
+          set -eu
+          export CLAUDE_CONFIG_DIR="$RUNNER_TEMP/claude-npx"
+          node bin/cli.mjs
+          test -f "$CLAUDE_CONFIG_DIR/skills/recap/recap.py"
+          node bin/cli.mjs
+          node bin/cli.mjs --uninstall
+          test ! -d "$CLAUDE_CONFIG_DIR/skills/recap"
