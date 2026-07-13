@@ -4,10 +4,16 @@
 
 Claude Code's built-in `/resume` only lists sessions for the directory you are standing in. After a reboot, a crash, or a week of jumping between five repos, there is no way to answer "what was I working on, and where did I leave off". `recap` answers that in one command, and can re-open a whole working set in terminal tabs.
 
-[![ci](https://img.shields.io/github/actions/workflow/status/noluyorAbi/claude-code-recap/ci.yml?branch=main&style=flat-square&label=ci&color=555)](https://github.com/noluyorAbi/claude-code-recap/actions/workflows/ci.yml)
-[![npm](https://img.shields.io/npm/v/claude-code-recap?style=flat-square&color=555&label=npm)](https://www.npmjs.com/package/claude-code-recap)
-[![license](https://img.shields.io/github/license/noluyorAbi/claude-code-recap?style=flat-square&color=555)](LICENSE)
-[![Claude Code](https://img.shields.io/badge/Claude%20Code-skill%20%2B%20plugin-555?style=flat-square)](https://code.claude.com/docs/en/skills)
+[![npm version](https://img.shields.io/npm/v/claude-code-recap?style=flat-square&logo=npm&logoColor=white&label=npm&labelColor=0b0b0b&color=d97757)](https://www.npmjs.com/package/claude-code-recap)
+[![npm downloads](https://img.shields.io/npm/dm/claude-code-recap?style=flat-square&logo=npm&logoColor=white&label=downloads&labelColor=0b0b0b&color=6e6e6e)](https://www.npmjs.com/package/claude-code-recap)
+[![ci](https://img.shields.io/github/actions/workflow/status/noluyorAbi/claude-code-recap/ci.yml?branch=main&style=flat-square&logo=githubactions&logoColor=white&label=ci&labelColor=0b0b0b)](https://github.com/noluyorAbi/claude-code-recap/actions/workflows/ci.yml)
+[![license](https://img.shields.io/github/license/noluyorAbi/claude-code-recap?style=flat-square&label=license&labelColor=0b0b0b&color=6e6e6e)](LICENSE)
+<br>
+[![Claude Code](https://img.shields.io/badge/Claude_Code-skill_%2B_plugin-d97757?style=flat-square&logo=claude&logoColor=white&labelColor=0b0b0b)](https://code.claude.com/docs/en/skills)
+[![python](https://img.shields.io/badge/python-3_stdlib-6e6e6e?style=flat-square&logo=python&logoColor=white&labelColor=0b0b0b)](https://www.python.org/)
+[![dependencies](https://img.shields.io/badge/dependencies-zero-6e6e6e?style=flat-square&labelColor=0b0b0b)](package.json)
+[![platform](https://img.shields.io/badge/platform-macOS_%7C_Linux-6e6e6e?style=flat-square&logo=apple&logoColor=white&labelColor=0b0b0b)](#requirements)
+[![PRs welcome](https://img.shields.io/badge/PRs-welcome-d97757?style=flat-square&labelColor=0b0b0b)](#contributing)
 
 <a href="assets/demo.mp4"><img src="assets/demo.gif" alt="recap listing recent Claude Code sessions across several projects, then re-opening them in terminal tabs" width="100%"></a>
 
@@ -27,7 +33,7 @@ The GIF above is a downsampled loop. The full-quality recording is [`assets/demo
 
 ## <img src="assets/icons/download.svg" width="16" align="center"> Install
 
-> **npm note.** The plugin marketplace and `curl | sh` paths are live. The `npx claude-code-recap` path goes live once the package is published to npm; until then, use the marketplace, the `curl | sh` one-liner, or a local checkout (`git clone` then `sh install.sh`).
+Three ways in, all live. The plugin marketplace is the native path; `npx` and `curl | sh` install the same skill into `~/.claude/skills/recap`.
 
 ### 1. Plugin marketplace (recommended)
 
