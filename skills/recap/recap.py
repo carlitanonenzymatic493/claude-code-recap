@@ -18,6 +18,7 @@ import glob
 import json
 import os
 import re
+import shlex
 import subprocess
 import sys
 from datetime import datetime, timedelta, timezone
@@ -25,6 +26,10 @@ from datetime import datetime, timedelta, timezone
 CLAUDE_DIR = os.path.expanduser(os.environ.get("CLAUDE_CONFIG_DIR", "~/.claude"))
 HISTORY = os.path.join(CLAUDE_DIR, "history.jsonl")
 PROJECTS = os.path.join(CLAUDE_DIR, "projects")
+
+# Sentinel used when a session has no recoverable project path. resume_cmd
+# turns this into a clear note instead of an unrunnable `cd (unknown path)`.
+UNKNOWN_PATH = "(unknown path)"
 
 # ---------- ANSI ----------
 def _tty() -> bool:
@@ -146,6 +151,8 @@ def load_history():
                 o = json.loads(line)
             except json.JSONDecodeError:
                 continue
+            if not isinstance(o, dict):
+                continue  # valid JSON but not an object (array, number, ...): skip
             sid = o.get("sessionId")
             ts = o.get("timestamp")
             if not sid or not isinstance(ts, (int, float)):
@@ -179,7 +186,7 @@ def peek_cwd(path: str, max_lines: int = 80):
                     o = json.loads(line)
                 except json.JSONDecodeError:
                     continue
-                if o.get("cwd"):
+                if isinstance(o, dict) and o.get("cwd"):
                     return o["cwd"]
     except OSError:
         pass
@@ -206,6 +213,8 @@ def parse_session(path: str):
                 o = json.loads(line)
             except json.JSONDecodeError:
                 continue  # broken / partial line: skip
+            if not isinstance(o, dict):
+                continue  # valid JSON but not an object (array, number, ...): skip
             any_line = True
             t = o.get("type")
             if o.get("cwd"):
@@ -278,7 +287,8 @@ def smart_summaries(sessions):
     except FileNotFoundError:
         print(c(YELLOW, "recap: `claude` CLI not found, --smart skipped"), file=sys.stderr)
     except Exception as e:
-        print(c(YELLOW, f"recap: --smart failed ({e}), using default summaries"), file=sys.stderr)
+        reason = str(e).strip() or type(e).__name__
+        print(c(YELLOW, f"recap: --smart failed ({reason}), using default summaries"), file=sys.stderr)
     return {}
 
 # ---------- main ----------
@@ -323,11 +333,15 @@ def collect(args):
 
     out = []
     for r in rows:
-        d = parse_session(r["file"])
+        try:
+            d = parse_session(r["file"])
+        except Exception:
+            # A single corrupt transcript must never abort the whole run.
+            continue
         if d is None:
             continue
         h = r["hist"] or {}
-        path = d["cwd"] or r["path"] or "(unknown path)"
+        path = d["cwd"] or r["path"] or UNKNOWN_PATH
         last = d["last_ts"] or h.get("last_ts") or r["mtime"]
         summary = (d["ai_title"] or h.get("first_prompt") or d["first_prompt"]
                    or "(no prompt)")
@@ -433,9 +447,28 @@ def render(sessions, args, day_counts):
     print(c256(FNT, " turns ≈ user + assistant messages"
                     "   ·   --pick jump in   ·   --open all in tabs   ·   --smart 1-line summaries"))
 
+def _shquote_path(path: str) -> str:
+    """Shell-quote a path so metacharacters or spaces in a directory name cannot
+    break out of (or break) the resume command. A leading ~ / ~/ is kept
+    unquoted so the copyable line still expands to the home directory when
+    pasted; only the remainder is quoted."""
+    if path == "~":
+        return "~"
+    if path.startswith("~/"):
+        rest = path[2:]
+        return "~/" + shlex.quote(rest) if rest else "~/"
+    return shlex.quote(path)
+
 def resume_cmd(path: str, sid: str, extra: str = "") -> str:
+    # No usable path: emit a clear, inert note instead of `cd (unknown path)`,
+    # which would neither run nor be safe to paste.
+    if not path or path == UNKNOWN_PATH:
+        return f"# recap: no project path recorded for session {sid}"
     flags = f"{extra} " if extra else ""
-    return f"cd {path} && claude {flags}-r {sid}"
+    # `extra` is the user's own --claude-flags, passed through verbatim (it may
+    # legitimately hold several space-separated flags). `path` and `sid` come
+    # from disk, so they are shell-quoted to prevent injection.
+    return f"cd {_shquote_path(path)} && claude {flags}-r {shlex.quote(sid)}"
 
 # ---------- open in terminal tabs ----------
 def _osa_str(s: str) -> str:
@@ -520,7 +553,7 @@ def open_tabs(sessions, args):
     r = subprocess.run(["osascript", "-"], input=script, capture_output=True, text=True)
     if r.returncode != 0:
         sys.exit(f"recap: osascript failed: {r.stderr.strip()[:300]}")
-    print(c256(TODAY_C, f"\n✓ opened {len(targets)} tab(s) in {app}"))
+    print(c256(TODAY_C, f"\nOpened {len(targets)} tab(s) in {app}"))
 
 def pick(sessions):
     try:

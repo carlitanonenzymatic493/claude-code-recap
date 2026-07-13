@@ -90,10 +90,11 @@ Use `--open` only when the user explicitly asks to re-open or resume the session
 - `~/.claude/history.jsonl` is the fast index (prompt text, timestamp, project path, session id). `CLAUDE_CONFIG_DIR` is honored when set.
 - `~/.claude/projects/<encoded>/<session>.jsonl` transcripts are parsed only for the displayed rows (title, branch, model, turn count). Project paths always come from the `cwd`/`project` fields, never decoded from folder names (that encoding is lossy).
 - Summary preference: Claude Code's own `ai-title` line, else the first real user prompt, else `(no prompt)`.
+- `--smart` privacy: the only path that leaves the machine. It shells out to the local `claude` CLI once and sends, for the listed sessions only, each session's 8-character id prefix, its title (first 150 characters), and its first user prompt (first 300 characters). No file bodies, no transcript contents, no other sessions. If `claude` is not on PATH, `--smart` is skipped with a warning and the offline summaries are used.
 - Turn count groups assistant streaming chunks by message id and is labeled approximate.
 - Broken or partial JSONL lines are skipped, never fatal. Times shown in the local timezone.
 - Display: day-grouped timeline (Today green, Yesterday amber), 14-day activity sparkline in the header, per-project colored dot (stable hash), four-level gray hierarchy with one accent color, per-session resume line indented with spaces only (safe to copy). Falls back to plain text when piped or when NO_COLOR is set.
-- Read-only: the tool never writes or deletes anything. It sees only sessions still on disk (Claude Code prunes old ones). `--open` is the single side-effecting path: it drives iTerm2/Terminal via `osascript` and touches no session data.
+- Read-only: the tool never writes or deletes anything. It sees only sessions still on disk (Claude Code prunes old ones). `--open` and `--pick` are the only side-effecting paths: `--open` drives iTerm2/Terminal via `osascript`, `--pick` `exec`s `claude -r` in the chosen directory. Neither writes or touches session data.
 
 ## Optional shell alias
 
